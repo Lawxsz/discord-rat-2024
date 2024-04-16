@@ -45,7 +45,9 @@
 
 ```diff
 
-v1.1 ⋮ 2023-11-20
+v1.2 ⋮ 2024-4-16
++ Improved Embeds
++ Improved session system
 + Project moved to 2024!
 + Creation of Prysmax - RAT Free
 ```
