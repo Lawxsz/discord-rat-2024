@@ -44,6 +44,9 @@
 ## <a id="changelog"></a>🌟 〢 ChangeLog
 
 ```diff
+v1.3 ⋮ 2024-7-20
++ Better GUI
++ Some Fix
 
 v1.2 ⋮ 2024-4-16
 + Improved Embeds
