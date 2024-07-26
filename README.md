@@ -38,7 +38,7 @@
 2. Execute in a console: ```python setup.py``` if not work install requirements of setup.py
 3. You must put bot-token and guild-id, the rat works on Discord!.
 
-![image](https://github.com/Lawxsz/prysmax-rat/assets/116668706/bbd5ef79-a9e3-4368-bff3-edf8e941bcdd)
+![image](https://github.com/user-attachments/assets/6ab5de6e-bf25-47f5-ad63-1063741d48bb)
 
 
 ## <a id="changelog"></a>🌟 〢 ChangeLog
